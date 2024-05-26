@@ -15,9 +15,9 @@ Run the Composer require command from the Terminal:
 ```bash
 composer require xslaincart/shoppingcart
 ```    
-If you're using Laravel 5.5 or above, this is all there is to do. 
+If you're using Laravel 8.0 or above, this is all there is to do. 
 
-Should you still be on version 5.4 of Laravel, the final steps for you are to add the service provider of the package and alias the package. To do this open your `config/app.php` file.
+Optional: open your `config/app.php` file.
 
 Add a new line to the `providers` array:
 ```php
