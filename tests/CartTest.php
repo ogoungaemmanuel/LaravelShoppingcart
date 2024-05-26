@@ -1,20 +1,20 @@
 <?php
 
-namespace Gloudemans\Tests\Shoppingcart;
+namespace Xslain\Tests\Shoppingcart;
 
 use Mockery;
 use PHPUnit\Framework\Assert;
-use Gloudemans\Shoppingcart\Cart;
+use Xslain\Shoppingcart\Cart;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Collection;
-use Gloudemans\Shoppingcart\CartItem;
+use Xslain\Shoppingcart\CartItem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Session\SessionManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
-use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
-use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Xslain\Shoppingcart\ShoppingcartServiceProvider;
+use Xslain\Tests\Shoppingcart\Fixtures\ProductModel;
+use Xslain\Tests\Shoppingcart\Fixtures\BuyableProduct;
 
 class CartTest extends TestCase
 {
@@ -340,7 +340,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException
+     * @expectedException \Xslain\Shoppingcart\Exceptions\InvalidRowIDException
      */
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
@@ -487,6 +487,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'isSaved' => false,
                 'options' => [],
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
@@ -497,6 +498,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'isSaved' => false,
                 'options' => [],
             ]
         ], $content->toArray());
@@ -620,7 +622,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\UnknownModelException
+     * @expectedException \Xslain\Shoppingcart\Exceptions\UnknownModelException
      * @expectedExceptionMessage The supplied model SomeModel does not exist.
      */
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
@@ -813,12 +815,8 @@ class CartTest extends TestCase
         Event::assertDispatched('cart.stored');
     }
 
-    /**
-     * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
-     * @expectedExceptionMessage A cart with identifier 123 was already stored.
-     */
-    public function it_will_throw_an_exception_when_a_cart_was_already_stored_using_the_specified_identifier()
+    /** @test */
+    public function it_can_update_the_cart_in_database()
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
@@ -832,8 +830,10 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
-        $cart->store($identifier);
+        $serialized = serialize($cart->content());
 
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+        
         Event::assertDispatched('cart.stored');
     }
 
@@ -858,9 +858,7 @@ class CartTest extends TestCase
 
         $cart->restore($identifier);
 
-        $this->assertItemsInCart(1, $cart);
-
-        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+        $this->assertItemsInCart(1, $cart);       
 
         Event::assertDispatched('cart.restored');
     }
@@ -919,7 +917,7 @@ class CartTest extends TestCase
     /**
      * Get an instance of the cart.
      *
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return \Xslain\Shoppingcart\Cart
      */
     private function getCart()
     {
