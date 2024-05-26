@@ -1,6 +1,6 @@
 <?php
 
-namespace Xslain\Shoppingcart;
+namespace Xslaincart\Shoppingcart;
 
 trait CanBeBought
 {

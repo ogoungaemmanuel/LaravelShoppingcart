@@ -1,20 +1,20 @@
 <?php
 
-namespace Xslain\Tests\Shoppingcart;
+namespace Xslaincart\Tests\Shoppingcart;
 
 use Mockery;
 use PHPUnit\Framework\Assert;
-use Xslain\Shoppingcart\Cart;
+use Xslaincart\Shoppingcart\Cart;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Collection;
-use Xslain\Shoppingcart\CartItem;
+use Xslaincart\Shoppingcart\CartItem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Session\SessionManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Xslain\Shoppingcart\ShoppingcartServiceProvider;
-use Xslain\Tests\Shoppingcart\Fixtures\ProductModel;
-use Xslain\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Xslaincart\Shoppingcart\ShoppingcartServiceProvider;
+use Xslaincart\Tests\Shoppingcart\Fixtures\ProductModel;
+use Xslaincart\Tests\Shoppingcart\Fixtures\BuyableProduct;
 
 class CartTest extends TestCase
 {
@@ -340,7 +340,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Xslain\Shoppingcart\Exceptions\InvalidRowIDException
+     * @expectedException \Xslaincart\Shoppingcart\Exceptions\InvalidRowIDException
      */
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
@@ -622,7 +622,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Xslain\Shoppingcart\Exceptions\UnknownModelException
+     * @expectedException \Xslaincart\Shoppingcart\Exceptions\UnknownModelException
      * @expectedExceptionMessage The supplied model SomeModel does not exist.
      */
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
@@ -917,7 +917,7 @@ class CartTest extends TestCase
     /**
      * Get an instance of the cart.
      *
-     * @return \Xslain\Shoppingcart\Cart
+     * @return \Xslaincart\Shoppingcart\Cart
      */
     private function getCart()
     {

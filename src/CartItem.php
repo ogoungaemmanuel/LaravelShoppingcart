@@ -1,9 +1,9 @@
 <?php
 
-namespace Xslain\Shoppingcart;
+namespace Xslaincart\Shoppingcart;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Xslain\Shoppingcart\Contracts\Buyable;
+use Xslaincart\Shoppingcart\Contracts\Buyable;
 use Illuminate\Contracts\Support\Jsonable;
 
 use Illuminate\Support\Arr;
@@ -196,7 +196,7 @@ class CartItem implements Arrayable, Jsonable
     /**
      * Update the cart item from a Buyable.
      *
-     * @param \Xslain\Shoppingcart\Contracts\Buyable $item
+     * @param \Xslaincart\Shoppingcart\Contracts\Buyable $item
      * @return void
      */
     public function updateFromBuyable(Buyable $item)
@@ -229,7 +229,7 @@ class CartItem implements Arrayable, Jsonable
      * Associate the cart item with the given model.
      *
      * @param mixed $model
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function associate($model)
     {
@@ -242,7 +242,7 @@ class CartItem implements Arrayable, Jsonable
      * Set the tax rate.
      *
      * @param int|float $taxRate
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function setTaxRate($taxRate)
     {
@@ -255,7 +255,7 @@ class CartItem implements Arrayable, Jsonable
      * Set saved state.
      *
      * @param bool $bool
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function setSaved($bool)
     {
@@ -306,9 +306,9 @@ class CartItem implements Arrayable, Jsonable
     /**
      * Create a new instance from a Buyable.
      *
-     * @param \Xslain\Shoppingcart\Contracts\Buyable $item
+     * @param \Xslaincart\Shoppingcart\Contracts\Buyable $item
      * @param array                                      $options
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
@@ -319,7 +319,7 @@ class CartItem implements Arrayable, Jsonable
      * Create a new instance from the given array.
      *
      * @param array $attributes
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public static function fromArray(array $attributes)
     {
@@ -335,7 +335,7 @@ class CartItem implements Arrayable, Jsonable
      * @param string     $name
      * @param float      $price
      * @param array      $options
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public static function fromAttributes($id, $name, $price, array $options = [])
     {

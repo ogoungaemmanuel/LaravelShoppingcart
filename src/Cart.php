@@ -1,16 +1,16 @@
 <?php
 
-namespace Xslain\Shoppingcart;
+namespace Xslaincart\Shoppingcart;
 
 use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Contracts\Events\Dispatcher;
-use Xslain\Shoppingcart\Contracts\Buyable;
-use Xslain\Shoppingcart\Exceptions\UnknownModelException;
-use Xslain\Shoppingcart\Exceptions\InvalidRowIDException;
-use Xslain\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Xslaincart\Shoppingcart\Contracts\Buyable;
+use Xslaincart\Shoppingcart\Exceptions\UnknownModelException;
+use Xslaincart\Shoppingcart\Exceptions\InvalidRowIDException;
+use Xslaincart\Shoppingcart\Exceptions\CartAlreadyStoredException;
 
 class Cart
 {
@@ -55,7 +55,7 @@ class Cart
      * Set the current cart instance.
      *
      * @param string|null $instance
-     * @return \Xslain\Shoppingcart\Cart
+     * @return \Xslaincart\Shoppingcart\Cart
      */
     public function instance($instance = null)
     {
@@ -85,7 +85,7 @@ class Cart
      * @param float     $price
      * @param array     $options
      * @param float     $taxrate
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [], $taxrate = null)
     {
@@ -121,7 +121,7 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function update($rowId, $qty)
     {
@@ -183,7 +183,7 @@ class Cart
      * Get a cart item from the cart by its rowId.
      *
      * @param string $rowId
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     public function get($rowId)
     {
@@ -471,7 +471,7 @@ class Cart
      * @param float     $price
      * @param array     $options
      * @param float     $taxrate
-     * @return \Xslain\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\CartItem
      */
     private function createCartItem($id, $name, $qty, $price, array $options, $taxrate)
     {

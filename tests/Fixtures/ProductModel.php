@@ -1,6 +1,6 @@
 <?php
 
-namespace Xslain\Tests\Shoppingcart\Fixtures;
+namespace Xslaincart\Tests\Shoppingcart\Fixtures;
 
 class ProductModel
 {

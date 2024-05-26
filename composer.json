@@ -1,5 +1,5 @@
 {
-    "name": "xslain/shoppingcart",
+    "name": "xslaincart/shoppingcart",
     "description": "Laravel Shoppingcart",
     "keywords": ["laravel", "shoppingcart"],
     "license": "MIT",
@@ -21,25 +21,25 @@
     },
     "autoload": {
         "psr-4": {
-            "Xslain\\Shoppingcart\\": "src/"
+            "Xslaincart\\Shoppingcart\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Xslain\\Tests\\Shoppingcart\\": "tests/"
+            "Xslaincart\\Tests\\Shoppingcart\\": "tests/"
         }
     },
     "suggest": {
-        "xslain/notify": "Simple flash notifications for Laravel"
+        "xslaincartcart/notify": "Simple flash notifications for Laravel"
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Xslain\\Shoppingcart\\ShoppingcartServiceProvider"
+                "Xslaincart\\Shoppingcart\\ShoppingcartServiceProvider"
             ],
             "aliases": {
-                "Cart": "Xslain\\Shoppingcart\\Facades\\Cart"
+                "Cart": "Xslaincart\\Shoppingcart\\Facades\\Cart"
             }
         }
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Xslain\Tests\Shoppingcart;
+namespace Xslaincart\Tests\Shoppingcart;
 
-use Xslain\Shoppingcart\Cart;
+use Xslaincart\Shoppingcart\Cart;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 trait CartAssertions
@@ -11,7 +11,7 @@ trait CartAssertions
      * Assert that the cart contains the given number of items.
      *
      * @param int|float                     $items
-     * @param \Xslain\Shoppingcart\Cart $cart
+     * @param \Xslaincart\Shoppingcart\Cart $cart
      */
     public function assertItemsInCart($items, Cart $cart)
     {
@@ -24,7 +24,7 @@ trait CartAssertions
      * Assert that the cart contains the given number of rows.
      *
      * @param int                           $rows
-     * @param \Xslain\Shoppingcart\Cart $cart
+     * @param \Xslaincart\Shoppingcart\Cart $cart
      */
     public function assertRowsInCart($rows, Cart $cart)
     {

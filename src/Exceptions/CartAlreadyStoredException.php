@@ -1,6 +1,6 @@
 <?php
 
-namespace Xslain\Shoppingcart\Exceptions;
+namespace Xslaincart\Shoppingcart\Exceptions;
 
 use RuntimeException;
 

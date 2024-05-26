@@ -1,10 +1,10 @@
 <?php
 
-namespace Xslain\Tests\Shoppingcart;
+namespace Xslaincart\Tests\Shoppingcart;
 
 use Orchestra\Testbench\TestCase;
-use Xslain\Shoppingcart\CartItem;
-use Xslain\Shoppingcart\ShoppingcartServiceProvider;
+use Xslaincart\Shoppingcart\CartItem;
+use Xslaincart\Shoppingcart\ShoppingcartServiceProvider;
 
 class CartItemTest extends TestCase
 {

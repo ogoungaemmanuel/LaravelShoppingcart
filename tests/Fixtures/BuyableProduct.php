@@ -1,8 +1,8 @@
 <?php
 
-namespace Xslain\Tests\Shoppingcart\Fixtures;
+namespace Xslaincart\Tests\Shoppingcart\Fixtures;
 
-use Xslain\Shoppingcart\Contracts\Buyable;
+use Xslaincart\Shoppingcart\Contracts\Buyable;
 
 class BuyableProduct implements Buyable
 {
