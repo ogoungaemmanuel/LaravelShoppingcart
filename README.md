@@ -26,6 +26,11 @@ Xslaincart\Shoppingcart\ShoppingcartServiceProvider::class
 And optionally add a new line to the `aliases` array:
 ```php
 'Cart' => Xslaincart\Shoppingcart\Facades\Cart::class,
+'Fee' => Xslaincart\Shoppingcart\Facades\Fee::class,
+'Expense' => Xslaincart\Shoppingcart\Facades\Expense::class,
+'Invoice' => Xslaincart\Shoppingcart\Facades\Invoice::class,
+'Booking' => Xslaincart\Shoppingcart\Facades\Booking::class,
+'Quotation' => Xslaincart\Shoppingcart\Facades\Quotation::class,
 ```
 Now you're ready to start using the shoppingcart in your application.
 
