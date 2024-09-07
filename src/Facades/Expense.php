@@ -11,6 +11,6 @@ class Expense extends Facade {
      */
     protected static function getFacadeAccessor()
     {
-        return 'exepnse';
+        return 'expense';
     }
 }

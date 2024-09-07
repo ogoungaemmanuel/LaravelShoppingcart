@@ -21,7 +21,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
         $this->app->bind('invoice', 'Xslaincart\Shoppingcart\Invoice\Invoice');
         $this->app->bind('booking', 'Xslaincart\Shoppingcart\Booking\Booking');
         $this->app->bind('quotation', 'Xslaincart\Shoppingcart\Quotation\Quotation');
-        $this->app->bind('quotation', 'Xslaincart\Shoppingcart\Fee\Fee');
+        $this->app->bind('fee', 'Xslaincart\Shoppingcart\Fee\Fee');
 
         $config = __DIR__ . '/../config/cart.php';
         $this->mergeConfigFrom($config, 'cart');
@@ -29,8 +29,13 @@ class ShoppingcartServiceProvider extends ServiceProvider
         $this->publishes([__DIR__ . '/../config/cart.php' => config_path('cart.php')], 'config');
 
         $this->app['events']->listen(Logout::class, function () {
-            if ($this->app['config']->get('cart.destroy_on_logout')) {
+            if ($this->app['config']->get('cart.destroy_on_logout') || $this->app['config']->get('expense.destroy_on_logout') || $this->app['config']->get('invoice.destroy_on_logout') || $this->app['config']->get('booking.destroy_on_logout') || $this->app['config']->get('quotation.destroy_on_logout') || $this->app['config']->get('fee.destroy_on_logout')) {
                 $this->app->make(SessionManager::class)->forget('cart');
+                $this->app->make(SessionManager::class)->forget('expense');
+                $this->app->make(SessionManager::class)->forget('invoice');
+                $this->app->make(SessionManager::class)->forget('booking');
+                $this->app->make(SessionManager::class)->forget('quotation');
+                $this->app->make(SessionManager::class)->forget('fee');
             }
         });
 
