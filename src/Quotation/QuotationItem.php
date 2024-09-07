@@ -1,6 +1,6 @@
 <?php
 
-namespace Xslaincart\Shoppingcart;
+namespace Xslaincart\Shoppingcart\Quotation;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Xslaincart\Shoppingcart\Contracts\Buyable;
@@ -8,45 +8,45 @@ use Illuminate\Contracts\Support\Jsonable;
 
 use Illuminate\Support\Arr;
 
-class CartItem implements Arrayable, Jsonable
+class QuotationItem implements Arrayable, Jsonable
 {
     /**
-     * The rowID of the cart item.
+     * The rowID of the booking item.
      *
      * @var string
      */
     public $rowId;
 
     /**
-     * The ID of the cart item.
+     * The ID of the booking item.
      *
      * @var int|string
      */
     public $id;
 
     /**
-     * The quantity for this cart item.
+     * The quantity for this booking item.
      *
      * @var int|float
      */
     public $qty;
 
     /**
-     * The name of the cart item.
+     * The name of the booking item.
      *
      * @var string
      */
     public $name;
 
     /**
-     * The price without TAX of the cart item.
+     * The price without TAX of the booking item.
      *
      * @var float
      */
     public $price;
 
     /**
-     * The options for this cart item.
+     * The options for this booking item.
      *
      * @var array
      */
@@ -60,7 +60,7 @@ class CartItem implements Arrayable, Jsonable
     private $associatedModel = null;
 
     /**
-     * The tax rate for the cart item.
+     * The tax rate for the booking item.
      *
      * @var int|float
      */
@@ -74,7 +74,7 @@ class CartItem implements Arrayable, Jsonable
     private $isSaved = false;
 
     /**
-     * CartItem constructor.
+     * BookingItem constructor.
      *
      * @param int|string $id
      * @param string     $name
@@ -96,7 +96,7 @@ class CartItem implements Arrayable, Jsonable
         $this->id       = $id;
         $this->name     = $name;
         $this->price    = floatval($price);
-        $this->options  = new CartItemOptions($options);
+        $this->options  = new QuotationItemOptions($options);
         $this->rowId = $this->generateRowId($id, $options);
     }
 
@@ -128,7 +128,7 @@ class CartItem implements Arrayable, Jsonable
 
     /**
      * Returns the formatted subtotal.
-     * Subtotal is price for whole CartItem without TAX
+     * Subtotal is price for whole BookingItem without TAX
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -142,7 +142,7 @@ class CartItem implements Arrayable, Jsonable
     
     /**
      * Returns the formatted total.
-     * Total is price for whole CartItem with TAX
+     * Total is price for whole BookingItem with TAX
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -181,7 +181,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Set the quantity for this cart item.
+     * Set the quantity for this booking item.
      *
      * @param int|float $qty
      */
@@ -194,7 +194,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Update the cart item from a Buyable.
+     * Update the booking item from a Buyable.
      *
      * @param \Xslaincart\Shoppingcart\Contracts\Buyable $item
      * @return void
@@ -208,7 +208,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Update the cart item from an array.
+     * Update the booking item from an array.
      *
      * @param array $attributes
      * @return void
@@ -220,16 +220,16 @@ class CartItem implements Arrayable, Jsonable
         $this->name     = Arr::get($attributes, 'name', $this->name);
         $this->price    = Arr::get($attributes, 'price', $this->price);
         $this->priceTax = $this->price + $this->tax;
-        $this->options  = new CartItemOptions(Arr::get($attributes, 'options', $this->options));
+        $this->options  = new QuotationItemOptions(Arr::get($attributes, 'options', $this->options));
 
         $this->rowId = $this->generateRowId($this->id, $this->options->all());
     }
 
     /**
-     * Associate the cart item with the given model.
+     * Associate the booking item with the given model.
      *
      * @param mixed $model
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public function associate($model)
     {
@@ -242,7 +242,7 @@ class CartItem implements Arrayable, Jsonable
      * Set the tax rate.
      *
      * @param int|float $taxRate
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public function setTaxRate($taxRate)
     {
@@ -255,7 +255,7 @@ class CartItem implements Arrayable, Jsonable
      * Set saved state.
      *
      * @param bool $bool
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public function setSaved($bool)
     {
@@ -265,7 +265,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Get an attribute from the cart item or get the associated model.
+     * Get an attribute from the booking item or get the associated model.
      *
      * @param string $attribute
      * @return mixed
@@ -308,7 +308,7 @@ class CartItem implements Arrayable, Jsonable
      *
      * @param \Xslaincart\Shoppingcart\Contracts\Buyable $item
      * @param array                                      $options
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
@@ -319,7 +319,7 @@ class CartItem implements Arrayable, Jsonable
      * Create a new instance from the given array.
      *
      * @param array $attributes
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public static function fromArray(array $attributes)
     {
@@ -335,7 +335,7 @@ class CartItem implements Arrayable, Jsonable
      * @param string     $name
      * @param float      $price
      * @param array      $options
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\BookingItem
      */
     public static function fromAttributes($id, $name, $price, array $options = [])
     {
@@ -343,7 +343,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Generate a unique id for the cart item.
+     * Generate a unique id for the booking item.
      *
      * @param string $id
      * @param array  $options
@@ -404,15 +404,15 @@ class CartItem implements Arrayable, Jsonable
     private function numberFormat($value, $decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         if (is_null($decimals)){
-            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
+            $decimals = is_null(config('booking.format.decimals')) ? 2 : config('booking.format.decimals');
         }
 
         if (is_null($decimalPoint)){
-            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
+            $decimalPoint = is_null(config('booking.format.decimal_point')) ? '.' : config('booking.format.decimal_point');
         }
 
         if (is_null($thousandSeperator)){
-            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
+            $thousandSeperator = is_null(config('booking.format.thousand_seperator')) ? ',' : config('booking.format.thousand_seperator');
         }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);

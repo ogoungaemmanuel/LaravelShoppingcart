@@ -16,7 +16,12 @@ class ShoppingcartServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('cart', 'Xslaincart\Shoppingcart\Cart');
+        $this->app->bind('cart', 'Xslaincart\Shoppingcart\Cart\Cart');
+        $this->app->bind('expense', 'Xslaincart\Shoppingcart\Expense\Expense');
+        $this->app->bind('invoice', 'Xslaincart\Shoppingcart\Invoice\Invoice');
+        $this->app->bind('booking', 'Xslaincart\Shoppingcart\Booking\Booking');
+        $this->app->bind('quotation', 'Xslaincart\Shoppingcart\Quotation\Quotation');
+        $this->app->bind('quotation', 'Xslaincart\Shoppingcart\Fee\Fee');
 
         $config = __DIR__ . '/../config/cart.php';
         $this->mergeConfigFrom($config, 'cart');

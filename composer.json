@@ -39,7 +39,12 @@
                 "Xslaincart\\Shoppingcart\\ShoppingcartServiceProvider"
             ],
             "aliases": {
-                "Cart": "Xslaincart\\Shoppingcart\\Facades\\Cart"
+                "Cart": "Xslaincart\\Shoppingcart\\Facades\\Cart",
+                "Booking": "Xslaincart\\Shoppingcart\\Facades\\Booking",
+                "Expense": "Xslaincart\\Shoppingcart\\Facades\\Expense",
+                "Invoice": "Xslaincart\\Shoppingcart\\Facades\\Invoice",
+                "Quotation": "Xslaincart\\Shoppingcart\\Facades\\Quotation",
+                "Fee": "Xslaincart\\Shoppingcart\\Facades\\Fee"
             }
         }
     }

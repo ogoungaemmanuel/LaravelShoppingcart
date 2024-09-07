@@ -1,6 +1,6 @@
 <?php
 
-namespace Xslaincart\Shoppingcart;
+namespace Xslaincart\Shoppingcart\Fee;
 
 use Closure;
 use Illuminate\Support\Collection;
@@ -10,9 +10,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Xslaincart\Shoppingcart\Contracts\Buyable;
 use Xslaincart\Shoppingcart\Exceptions\UnknownModelException;
 use Xslaincart\Shoppingcart\Exceptions\InvalidRowIDException;
-use Xslaincart\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Xslaincart\Shoppingcart\Exceptions\FeeAlreadyStoredException;
 
-class Cart
+class Fee
 {
     const DEFAULT_INSTANCE = 'default';
 
@@ -31,14 +31,14 @@ class Cart
     private $events;
 
     /**
-     * Holds the current cart instance.
+     * Holds the current fee instance.
      *
      * @var string
      */
     private $instance;
 
     /**
-     * Cart constructor.
+     * Fee constructor.
      *
      * @param \Illuminate\Session\SessionManager      $session
      * @param \Illuminate\Contracts\Events\Dispatcher $events
@@ -52,32 +52,32 @@ class Cart
     }
 
     /**
-     * Set the current cart instance.
+     * Set the current fee instance.
      *
      * @param string|null $instance
-     * @return \Xslaincart\Shoppingcart\Cart
+     * @return \Xslaincart\Shoppingcart\Fee
      */
     public function instance($instance = null)
     {
         $instance = $instance ?: self::DEFAULT_INSTANCE;
 
-        $this->instance = sprintf('%s.%s', 'cart', $instance);
+        $this->instance = sprintf('%s.%s', 'fee', $instance);
 
         return $this;
     }
 
     /**
-     * Get the current cart instance.
+     * Get the current fee instance.
      *
      * @return string
      */
     public function currentInstance()
     {
-        return str_replace('cart.', '', $this->instance);
+        return str_replace('fee.', '', $this->instance);
     }
 
     /**
-     * Add an item to the cart.
+     * Add an item to the fee.
      *
      * @param mixed     $id
      * @param mixed     $name
@@ -85,7 +85,7 @@ class Cart
      * @param float     $price
      * @param array     $options
      * @param float     $taxrate
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\FeeItem
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [], $taxrate = null)
     {
@@ -95,108 +95,108 @@ class Cart
             }, $id);
         }
 
-        if ($id instanceof CartItem) {
-            $cartItem = $id;
+        if ($id instanceof FeeItem) {
+            $feeItem = $id;
         } else {
-            $cartItem = $this->createCartItem($id, $name, $qty, $price, $options, $taxrate);
+            $feeItem = $this->createFeeItem($id, $name, $qty, $price, $options, $taxrate);
         }
 
         $content = $this->getContent();
 
-        if ($content->has($cartItem->rowId)) {
-            $cartItem->qty += $content->get($cartItem->rowId)->qty;
+        if ($content->has($feeItem->rowId)) {
+            $feeItem->qty += $content->get($feeItem->rowId)->qty;
         }
 
-        $content->put($cartItem->rowId, $cartItem);
+        $content->put($feeItem->rowId, $feeItem);
 
-        $this->events->dispatch('cart.added', $cartItem);
+        $this->events->dispatch('fee.added', $feeItem);
 
         $this->session->put($this->instance, $content);
 
-        return $cartItem;
+        return $feeItem;
     }
 
     /**
-     * Update the cart item with the given rowId.
+     * Update the fee item with the given rowId.
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\FeeItem
      */
     public function update($rowId, $qty)
     {
-        $cartItem = $this->get($rowId);
+        $feeItem = $this->get($rowId);
 
         if ($qty instanceof Buyable) {
-            $cartItem->updateFromBuyable($qty);
+            $feeItem->updateFromBuyable($qty);
         } elseif (is_array($qty)) {
-            $cartItem->updateFromArray($qty);
+            $feeItem->updateFromArray($qty);
         } else {
-            $cartItem->qty = $qty;
+            $feeItem->qty = $qty;
         }
 
         $content = $this->getContent();
 
-        if ($rowId !== $cartItem->rowId) {
+        if ($rowId !== $feeItem->rowId) {
             $content->pull($rowId);
 
-            if ($content->has($cartItem->rowId)) {
-                $existingCartItem = $this->get($cartItem->rowId);
-                $cartItem->setQuantity($existingCartItem->qty + $cartItem->qty);
+            if ($content->has($feeItem->rowId)) {
+                $existingFeeItem = $this->get($feeItem->rowId);
+                $feeItem->setQuantity($existingFeeItem->qty + $feeItem->qty);
             }
         }
 
-        if ($cartItem->qty <= 0) {
-            $this->remove($cartItem->rowId);
+        if ($feeItem->qty <= 0) {
+            $this->remove($feeItem->rowId);
             return;
         } else {
-            $content->put($cartItem->rowId, $cartItem);
+            $content->put($feeItem->rowId, $feeItem);
         }
 
-        $this->events->dispatch('cart.updated', $cartItem);
+        $this->events->dispatch('fee.updated', $feeItem);
 
         $this->session->put($this->instance, $content);
 
-        return $cartItem;
+        return $feeItem;
     }
 
     /**
-     * Remove the cart item with the given rowId from the cart.
+     * Remove the fee item with the given rowId from the fee.
      *
      * @param string $rowId
      * @return void
      */
     public function remove($rowId)
     {
-        $cartItem = $this->get($rowId);
+        $feeItem = $this->get($rowId);
 
         $content = $this->getContent();
 
-        $content->pull($cartItem->rowId);
+        $content->pull($feeItem->rowId);
 
-        $this->events->dispatch('cart.removed', $cartItem);
+        $this->events->dispatch('fee.removed', $feeItem);
 
         $this->session->put($this->instance, $content);
     }
 
     /**
-     * Get a cart item from the cart by its rowId.
+     * Get a fee item from the fee by its rowId.
      *
      * @param string $rowId
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\FeeItem
      */
     public function get($rowId)
     {
         $content = $this->getContent();
 
         if ( ! $content->has($rowId))
-            throw new InvalidRowIDException("The cart does not contain rowId {$rowId}.");
+            throw new InvalidRowIDException("The fee does not contain rowId {$rowId}.");
 
         return $content->get($rowId);
     }
 
     /**
-     * Destroy the current cart instance.
+     * Destroy the current fee instance.
      *
      * @return void
      */
@@ -206,7 +206,7 @@ class Cart
     }
 
     /**
-     * Get the content of the cart.
+     * Get the content of the fee.
      *
      * @return \Illuminate\Support\Collection
      */
@@ -220,7 +220,7 @@ class Cart
     }
 
     /**
-     * Get the number of items in the cart.
+     * Get the number of items in the fee.
      *
      * @return int|float
      */
@@ -232,7 +232,7 @@ class Cart
     }
 
     /**
-     * Get the total price of the items in the cart.
+     * Get the total price of the items in the fee.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -243,15 +243,15 @@ class Cart
     {
         $content = $this->getContent();
 
-        $total = $content->reduce(function ($total, CartItem $cartItem) {
-            return $total + ($cartItem->qty * $cartItem->priceTax);
+        $total = $content->reduce(function ($total, FeeItem $feeItem) {
+            return $total + ($feeItem->qty * $feeItem->priceTax);
         }, 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
-     * Get the total tax of the items in the cart.
+     * Get the total tax of the items in the fee.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -262,15 +262,15 @@ class Cart
     {
         $content = $this->getContent();
 
-        $tax = $content->reduce(function ($tax, CartItem $cartItem) {
-            return $tax + ($cartItem->qty * $cartItem->tax);
+        $tax = $content->reduce(function ($tax, FeeItem $feeItem) {
+            return $tax + ($feeItem->qty * $feeItem->tax);
         }, 0);
 
         return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
-     * Get the subtotal (total - tax) of the items in the cart.
+     * Get the subtotal (total - tax) of the items in the fee.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -281,15 +281,15 @@ class Cart
     {
         $content = $this->getContent();
 
-        $subTotal = $content->reduce(function ($subTotal, CartItem $cartItem) {
-            return $subTotal + ($cartItem->qty * $cartItem->price);
+        $subTotal = $content->reduce(function ($subTotal, FeeItem $feeItem) {
+            return $subTotal + ($feeItem->qty * $feeItem->price);
         }, 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
-     * Search the cart content for a cart item matching the given search closure.
+     * Search the fee content for a fee item matching the given search closure.
      *
      * @param \Closure $search
      * @return \Illuminate\Support\Collection
@@ -302,7 +302,7 @@ class Cart
     }
 
     /**
-     * Associate the cart item with the given rowId with the given model.
+     * Associate the fee item with the given rowId with the given model.
      *
      * @param string $rowId
      * @param mixed  $model
@@ -314,19 +314,19 @@ class Cart
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
-        $cartItem = $this->get($rowId);
+        $feeItem = $this->get($rowId);
 
-        $cartItem->associate($model);
+        $feeItem->associate($model);
 
         $content = $this->getContent();
 
-        $content->put($cartItem->rowId, $cartItem);
+        $content->put($feeItem->rowId, $feeItem);
 
         $this->session->put($this->instance, $content);
     }
 
     /**
-     * Set the tax rate for the cart item with the given rowId.
+     * Set the tax rate for the fee item with the given rowId.
      *
      * @param string    $rowId
      * @param int|float $taxRate
@@ -334,19 +334,19 @@ class Cart
      */
     public function setTax($rowId, $taxRate)
     {
-        $cartItem = $this->get($rowId);
+        $feeItem = $this->get($rowId);
 
-        $cartItem->setTaxRate($taxRate);
+        $feeItem->setTaxRate($taxRate);
 
         $content = $this->getContent();
 
-        $content->put($cartItem->rowId, $cartItem);
+        $content->put($feeItem->rowId, $feeItem);
 
         $this->session->put($this->instance, $content);
     }
 
     /**
-     * Store an the current instance of the cart.
+     * Store an the current instance of the fee.
      *
      * @param mixed $identifier
      * @return void
@@ -370,18 +370,18 @@ class Cart
             'created_at'=> new \DateTime()
         ]);
 
-        $this->events->dispatch('cart.stored');
+        $this->events->dispatch('fee.stored');
     }
 
     /**
-     * Restore the cart with the given identifier.
+     * Restore the fee with the given identifier.
      *
      * @param mixed $identifier
      * @return void
      */
     public function restore($identifier)
     {
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if( ! $this->storedFeeWithIdentifierExists($identifier)) {
             return;
         }
 
@@ -397,11 +397,11 @@ class Cart
 
         $content = $this->getContent();
 
-        foreach ($storedContent as $cartItem) {
-            $content->put($cartItem->rowId, $cartItem);
+        foreach ($storedContent as $feeItem) {
+            $content->put($feeItem->rowId, $feeItem);
         }
 
-        $this->events->dispatch('cart.restored');
+        $this->events->dispatch('fee.restored');
 
         $this->session->put($this->instance, $content);
 
@@ -412,11 +412,11 @@ class Cart
 
 
     /**
-     * Deletes the stored cart with given identifier
+     * Deletes the stored fee with given identifier
      *
      * @param mixed $identifier
      */
-    public function deleteStoredCart($identifier) {
+    public function deleteStoredFee($identifier) {
         $this->getConnection()
              ->table($this->getTableName())
              ->where('identifier', $identifier)
@@ -449,7 +449,7 @@ class Cart
     }
 
     /**
-     * Get the carts content, if there is no cart content set yet, return a new empty Collection
+     * Get the carts content, if there is no fee content set yet, return a new empty Collection
      *
      * @return \Illuminate\Support\Collection
      */
@@ -463,7 +463,7 @@ class Cart
     }
 
     /**
-     * Create a new CartItem from the supplied attributes.
+     * Create a new FeeItem from the supplied attributes.
      *
      * @param mixed     $id
      * @param mixed     $name
@@ -471,29 +471,29 @@ class Cart
      * @param float     $price
      * @param array     $options
      * @param float     $taxrate
-     * @return \Xslaincart\Shoppingcart\CartItem
+     * @return \Xslaincart\Shoppingcart\FeeItem
      */
-    private function createCartItem($id, $name, $qty, $price, array $options, $taxrate)
+    private function createFeeItem($id, $name, $qty, $price, array $options, $taxrate)
     {
         if ($id instanceof Buyable) {
-            $cartItem = CartItem::fromBuyable($id, $qty ?: []);
-            $cartItem->setQuantity($name ?: 1);
-            $cartItem->associate($id);
+            $feeItem = FeeItem::fromBuyable($id, $qty ?: []);
+            $feeItem->setQuantity($name ?: 1);
+            $feeItem->associate($id);
         } elseif (is_array($id)) {
-            $cartItem = CartItem::fromArray($id);
-            $cartItem->setQuantity($id['qty']);
+            $feeItem = FeeItem::fromArray($id);
+            $feeItem->setQuantity($id['qty']);
         } else {
-            $cartItem = CartItem::fromAttributes($id, $name, $price, $options);
-            $cartItem->setQuantity($qty);
+            $feeItem = FeeItem::fromAttributes($id, $name, $price, $options);
+            $feeItem->setQuantity($qty);
         }
 
         if(isset($taxrate) && is_numeric($taxrate)) {
-            $cartItem->setTaxRate($taxrate);
+            $feeItem->setTaxRate($taxrate);
         } else {
-            $cartItem->setTaxRate(config('cart.tax'));
+            $feeItem->setTaxRate(config('fee.tax'));
         }
 
-        return $cartItem;
+        return $feeItem;
     }
 
     /**
@@ -513,7 +513,7 @@ class Cart
      * @param $identifier
      * @return bool
      */
-    protected function storedCartWithIdentifierExists($identifier)
+    protected function storedFeeWithIdentifierExists($identifier)
     {
         return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->where('instance', $this->currentInstance())->exists();
     }
@@ -537,7 +537,7 @@ class Cart
      */
     protected function getTableName()
     {
-        return config('cart.database.table', 'shoppingcart');
+        return config('fee.database.table', 'shoppingfee');
     }
 
     /**
@@ -547,7 +547,7 @@ class Cart
      */
     private function getConnectionName()
     {
-        $connection = config('cart.database.connection');
+        $connection = config('fee.database.connection');
 
         return is_null($connection) ? config('database.default') : $connection;
     }
@@ -564,13 +564,13 @@ class Cart
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
         if(is_null($decimals)){
-            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
+            $decimals = is_null(config('fee.format.decimals')) ? 2 : config('fee.format.decimals');
         }
         if(is_null($decimalPoint)){
-            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
+            $decimalPoint = is_null(config('fee.format.decimal_point')) ? '.' : config('fee.format.decimal_point');
         }
         if(is_null($thousandSeperator)){
-            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
+            $thousandSeperator = is_null(config('fee.format.thousand_seperator')) ? ',' : config('fee.format.thousand_seperator');
         }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
