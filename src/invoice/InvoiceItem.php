@@ -233,7 +233,7 @@ class InvoiceItem implements Arrayable, Jsonable
      */
     public function associate($model)
     {
-        $this->associatedModel = is_string($model) ? $model : get_class($model);
+        $this->associatedModel = is_string($model) ? $model : $model::class;
         
         return $this;
     }

@@ -24,13 +24,6 @@ class Quotation
     protected $session;
 
     /**
-     * Instance of the event dispatcher.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    private $events;
-
-    /**
      * Holds the current quotation instance.
      *
      * @var string
@@ -43,10 +36,12 @@ class Quotation
      * @param \Illuminate\Session\SessionManager      $session
      * @param \Illuminate\Contracts\Events\Dispatcher $events
      */
-    public function __construct(SessionManager $session, Dispatcher $events)
+    public function __construct(SessionManager $session, /**
+     * Instance of the event dispatcher.
+     */
+    private readonly Dispatcher $events)
     {
         $this->session = $session;
-        $this->events = $events;
 
         $this->instance(self::DEFAULT_INSTANCE);
     }
@@ -90,9 +85,7 @@ class Quotation
     public function add($id, $name = null, $qty = null, $price = null, array $options = [], $taxrate = null)
     {
         if ($this->isMulti($id)) {
-            return array_map(function ($item) {
-                return $this->add($item);
-            }, $id);
+            return array_map(fn($item) => $this->add($item), $id);
         }
 
         if ($id instanceof QuotationItem) {
@@ -243,9 +236,7 @@ class Quotation
     {
         $content = $this->getContent();
 
-        $total = $content->reduce(function ($total, QuotationItem $quotationItem) {
-            return $total + ($quotationItem->qty * $quotationItem->priceTax);
-        }, 0);
+        $total = $content->reduce(fn($total, QuotationItem $quotationItem) => $total + ($quotationItem->qty * $quotationItem->priceTax), 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
     }
@@ -262,9 +253,7 @@ class Quotation
     {
         $content = $this->getContent();
 
-        $tax = $content->reduce(function ($tax, QuotationItem $quotationItem) {
-            return $tax + ($quotationItem->qty * $quotationItem->tax);
-        }, 0);
+        $tax = $content->reduce(fn($tax, QuotationItem $quotationItem) => $tax + ($quotationItem->qty * $quotationItem->tax), 0);
 
         return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
     }
@@ -281,9 +270,7 @@ class Quotation
     {
         $content = $this->getContent();
 
-        $subTotal = $content->reduce(function ($subTotal, QuotationItem $quotationItem) {
-            return $subTotal + ($quotationItem->qty * $quotationItem->price);
-        }, 0);
+        $subTotal = $content->reduce(fn($subTotal, QuotationItem $quotationItem) => $subTotal + ($quotationItem->qty * $quotationItem->price), 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }

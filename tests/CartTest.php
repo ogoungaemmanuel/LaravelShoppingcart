@@ -60,7 +60,7 @@ class CartTest extends TestCase
     {
         parent::setUp();
 
-        $this->app->afterResolving('migrator', function ($migrator) {
+        $this->app->afterResolving('migrator', function ($migrator): void {
             $migrator->path(realpath(__DIR__.'/../database/migrations'));
         });
     }
@@ -550,9 +550,7 @@ class CartTest extends TestCase
         $cart->add(new BuyableProduct(1, 'Some item'));
         $cart->add(new BuyableProduct(2, 'Another item'));
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
-            return $cartItem->name == 'Some item';
-        });
+        $cartItem = $cart->search(fn($cartItem, $rowId) => $cartItem->name == 'Some item');
 
         $this->assertInstanceOf(Collection::class, $cartItem);
         $this->assertCount(1, $cartItem);
@@ -569,9 +567,7 @@ class CartTest extends TestCase
         $cart->add(new BuyableProduct(2, 'Some item'));
         $cart->add(new BuyableProduct(3, 'Another item'));
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
-            return $cartItem->name == 'Some item';
-        });
+        $cartItem = $cart->search(fn($cartItem, $rowId) => $cartItem->name == 'Some item');
 
         $this->assertInstanceOf(Collection::class, $cartItem);
     }
@@ -584,9 +580,7 @@ class CartTest extends TestCase
         $cart->add(new BuyableProduct(1, 'Some item'), 1, ['color' => 'red']);
         $cart->add(new BuyableProduct(2, 'Another item'), 1, ['color' => 'blue']);
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
-            return $cartItem->options->color == 'red';
-        });
+        $cartItem = $cart->search(fn($cartItem, $rowId) => $cartItem->options->color == 'red');
 
         $this->assertInstanceOf(Collection::class, $cartItem);
         $this->assertCount(1, $cartItem);
@@ -905,7 +899,7 @@ class CartTest extends TestCase
     {
         $this->app['config']->set('cart.destroy_on_logout', true);
 
-        $this->app->instance(SessionManager::class, Mockery::mock(SessionManager::class, function ($mock) {
+        $this->app->instance(SessionManager::class, Mockery::mock(SessionManager::class, function ($mock): void {
             $mock->shouldReceive('forget')->once()->with('cart');
         }));
 

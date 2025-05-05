@@ -24,13 +24,6 @@ class Fee
     protected $session;
 
     /**
-     * Instance of the event dispatcher.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    private $events;
-
-    /**
      * Holds the current fee instance.
      *
      * @var string
@@ -43,10 +36,12 @@ class Fee
      * @param \Illuminate\Session\SessionManager      $session
      * @param \Illuminate\Contracts\Events\Dispatcher $events
      */
-    public function __construct(SessionManager $session, Dispatcher $events)
+    public function __construct(SessionManager $session, /**
+     * Instance of the event dispatcher.
+     */
+    private readonly Dispatcher $events)
     {
         $this->session = $session;
-        $this->events = $events;
 
         $this->instance(self::DEFAULT_INSTANCE);
     }
@@ -90,9 +85,7 @@ class Fee
     public function add($id, $name = null, $qty = null, $price = null, array $options = [], $taxrate = null)
     {
         if ($this->isMulti($id)) {
-            return array_map(function ($item) {
-                return $this->add($item);
-            }, $id);
+            return array_map(fn($item) => $this->add($item), $id);
         }
 
         if ($id instanceof FeeItem) {
@@ -243,9 +236,7 @@ class Fee
     {
         $content = $this->getContent();
 
-        $total = $content->reduce(function ($total, FeeItem $feeItem) {
-            return $total + ($feeItem->qty * $feeItem->priceTax);
-        }, 0);
+        $total = $content->reduce(fn($total, FeeItem $feeItem) => $total + ($feeItem->qty * $feeItem->priceTax), 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
     }
@@ -262,9 +253,7 @@ class Fee
     {
         $content = $this->getContent();
 
-        $tax = $content->reduce(function ($tax, FeeItem $feeItem) {
-            return $tax + ($feeItem->qty * $feeItem->tax);
-        }, 0);
+        $tax = $content->reduce(fn($tax, FeeItem $feeItem) => $tax + ($feeItem->qty * $feeItem->tax), 0);
 
         return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
     }
@@ -281,9 +270,7 @@ class Fee
     {
         $content = $this->getContent();
 
-        $subTotal = $content->reduce(function ($subTotal, FeeItem $feeItem) {
-            return $subTotal + ($feeItem->qty * $feeItem->price);
-        }, 0);
+        $subTotal = $content->reduce(fn($subTotal, FeeItem $feeItem) => $subTotal + ($feeItem->qty * $feeItem->price), 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
